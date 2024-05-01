@@ -10,35 +10,26 @@ A cryptocurrency investment and management platform.
 ```python
 git clone https://github.com/RootSherry/NK_CryptoManage.git
 cd NK_CryptoManage
+```
 
 3. 创建虚拟环境
-为了避免影响到您的全局Python环境，推荐在一个虚拟环境中安装本项目。使用以下命令创建一个新的虚拟环境：
+创建一个新的虚拟环境：
+```python
+conda create -n quant python=3.8
+```
 
-bash
-Copy code
-python -m venv venv
-激活虚拟环境：
-
-在Windows上：
-cmd
-Copy code
-venv\Scripts\activate
-在Linux或macOS上：
-bash
-Copy code
-source venv/bin/activate
 3. 安装依赖
 项目的依赖在 requirements.txt 文件中列出。安装这些依赖，请确保您的虚拟环境已激活，然后执行：
-
-bash
-Copy code
+```python
 pip install -r requirements.txt
+```
 4. 运行平台
-一旦依赖安装完成，您就可以启动平台了。具体运行命令取决于您的项目结构和入口脚本，假设主脚本名为 main.py，运行：
+一旦依赖安装完成，您就可以启动平台了。
+直接运行附件中的app.py文件即可。
 
-bash
-Copy code
-python main.py
+在平台里自行注册账号填写api信息即可使用。
+
+要使用查询资金曲线功能还需运行curve_run.py文件。
 # 平台功能
 
 ### **主页：**![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/DaY0O4fUnGk7hQeiBDiw7aoOOdlLaq4CI1C1e83f.png?imageMogr2/thumbnail/500x500 "219024")
