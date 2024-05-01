@@ -68,14 +68,17 @@ python3 curve_run.py
 - 转账操作会优先使用转出账户的现货余额。如果余额不足，系统会自动从U本位合约账户中划转补充。转入账户收到资金后，会自动将其转入U本位合约账户中用作U本位策略保证金。
 - 可以在查询界面中，查询不同账号在自定义时间内的转账记录
 - 必须填写主账号，且命名为Root，否则无法完成转账操作。(在管理界面中添加主账号)
-  ![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/GmsQ01xXjN9D6e7arIGP8la8boDuEVeyMfI34U92.png?imageMogr2/thumbnail/500x500 "219028")![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/iUtfNi5Pf1afP95F2OCFZqmZfE96vx4IQm75Rge9.png?imageMogr2/thumbnail/500x500 "219029")
+<img width="1716" alt="image" src="https://github.com/RootSherry/NK_CryptoManage/assets/121684306/bdfd4af6-ddf0-4e87-88b0-19a8d9072443">
+<img width="1376" alt="image" src="https://github.com/RootSherry/NK_CryptoManage/assets/121684306/f070c58d-ccd8-47ad-a22a-b4f7a5b76729">
+
+
 
 ### 查询：
 
 除了前面提到的查询购买记录和转账记录，还可以：
 
 - 查询账户余额，包含现货和U本位账户中的币种数量以及价值
-- 查询策略表现，可以查询不同账户的实盘资金曲线，以及曲线评价。评价方式对标中性f1框架，大家可以自行对比实盘与回测是否表现一致。数据记录的方式参考了潇老板的帖子[【复盘系统，V2升级版本】基金净值法，出入J记录维护 - 量化小论坛 (quantclass.cn)](https://bbs.quantclass.cn/thread/25619)，但是没有使用基金净值法。就是说，加减仓会影响实盘资金曲线。刻意采用这种方式，是为了回撤加仓跑出一条漂亮的实盘曲线，心里看着爽（俗称骗自己），看不到回撤实盘更容易坚持，适合心灵脆弱的老板。想要不受加减仓影响需要自行稍作修改。
+- 查询策略表现，可以查询不同账户的实盘资金曲线，以及曲线评价。加减仓会影响实盘资金曲线。刻意采用这种方式，是为了回撤加仓跑出一条漂亮的实盘曲线，心里看着爽（俗称骗自己），看不到回撤实盘更容易坚持，适合心灵脆弱的人。想要不受加减仓影响需要自行稍作修改。
 
 ![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/AzSn3QbbAZ5HdxPjvrG9JjBEnYSpXjIw7XzRnd26.png?imageMogr2/thumbnail/500x500 "219030")![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/bdd9ise1ezReYPcE0BpGyLMZoy7BLzXsY1kfuDjA.png?imageMogr2/thumbnail/500x500 "219031")
 ![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/95yOsBVVX8j4fGqyxejhfqfWiYrnu8H072xVBJix.png?imageMogr2/thumbnail/500x500 "219032")
