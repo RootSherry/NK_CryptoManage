@@ -80,18 +80,16 @@ python3 curve_run.py
 - 查询账户余额，包含现货和U本位账户中的币种数量以及价值
 - 查询策略表现，可以查询不同账户的实盘资金曲线，以及曲线评价。加减仓会影响实盘资金曲线。刻意采用这种方式，是为了回撤加仓跑出一条漂亮的实盘曲线，心里看着爽（俗称骗自己），看不到回撤实盘更容易坚持，适合心灵脆弱的人。想要不受加减仓影响需要自行稍作修改。
 
-![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/AzSn3QbbAZ5HdxPjvrG9JjBEnYSpXjIw7XzRnd26.png?imageMogr2/thumbnail/500x500 "219030")![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/bdd9ise1ezReYPcE0BpGyLMZoy7BLzXsY1kfuDjA.png?imageMogr2/thumbnail/500x500 "219031")
-![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/95yOsBVVX8j4fGqyxejhfqfWiYrnu8H072xVBJix.png?imageMogr2/thumbnail/500x500 "219032")
+<img width="1706" alt="image" src="https://github.com/RootSherry/NK_CryptoManage/assets/121684306/72065b39-abda-4521-b173-a3e27ab53f23">
+<img width="484" alt="image" src="https://github.com/RootSherry/NK_CryptoManage/assets/121684306/4be772a9-4c73-4a5e-89d3-d1966b9ba4b9">
+<img width="1585" alt="image" src="https://github.com/RootSherry/NK_CryptoManage/assets/121684306/6c7b681a-d202-414d-bba3-b16c54fe7f19">
+
+
+
 
 ### 管理：
 
 在这个界面添加账户API和邮箱，填错了可以在“更新账户”中修改，不要了可以直接删除，不需要在代码中填config
-![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/5YZRx0KhYKgb49P15nh3JWOc1prv7JBqhra8dsEw.png?imageMogr2/thumbnail/500x500 "219034")
+<img width="516" alt="image" src="https://github.com/RootSherry/NK_CryptoManage/assets/121684306/15be5761-7cd1-49c6-afdc-9cdf6a57abb5">
 
-# 使用说明
 
-直接运行附件中的app.py文件即可。
-
-在平台里自行注册账号填写api信息即可使用。
-
-要使用查询资金曲线功能还需运行curve_run.py文件。
