@@ -47,7 +47,9 @@ python3 curve_run.py
 ```
 # 平台功能
 
-### **主页：**![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/DaY0O4fUnGk7hQeiBDiw7aoOOdlLaq4CI1C1e83f.png?imageMogr2/thumbnail/500x500 "219024")
+### 主页：
+<img width="1454" alt="image" src="https://github.com/RootSherry/NK_CryptoManage/assets/121684306/765b4fb3-b6b3-480c-819b-8ec5826ccc5f">
+
 
 ### 购买：
 
