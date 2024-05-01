@@ -5,6 +5,8 @@ A cryptocurrency investment and management platform.
 ## 安装说明
 
 1. 克隆仓库
+
+
 首先，您需要从GitHub克隆仓库到本地计算机。打开终端（在Linux/macOS）或命令提示符/PowerShell（在Windows）并运行以下命令：
 
 ```python
@@ -13,17 +15,23 @@ cd NK_CryptoManage
 ```
 
 3. 创建虚拟环境
+
+   
 创建一个新的虚拟环境：
 ```python
 conda create -n quant python=3.8
 ```
 
 3. 安装依赖
+
+   
 项目的依赖在 requirements.txt 文件中列出。安装这些依赖，请确保您的虚拟环境已激活，然后执行：
 ```python
 pip install -r requirements.txt
 ```
 4. 运行平台
+
+
 一旦依赖安装完成，您就可以启动平台了。
 直接运行附件中的app.py文件即可。
 
