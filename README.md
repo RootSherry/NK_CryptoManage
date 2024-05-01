@@ -2,6 +2,9 @@
 一款加密货币的投资和管理平台。
 
 A cryptocurrency investment and management platform.
+
+
+平台功能基于币安交易所，需要使用币安账号的api.
 ## 安装说明
 
 1. 克隆仓库
@@ -33,11 +36,12 @@ pip install -r requirements.txt
 
 
 一旦依赖安装完成，您就可以启动平台了。
-直接运行附件中的app.py文件即可。
+`python3 app.py`
 
 在平台里自行注册账号填写api信息即可使用。
 
 要使用查询资金曲线功能还需运行curve_run.py文件。
+`python3 curve_run.py`
 # 平台功能
 
 ### **主页：**![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/DaY0O4fUnGk7hQeiBDiw7aoOOdlLaq4CI1C1e83f.png?imageMogr2/thumbnail/500x500 "219024")
