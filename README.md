@@ -2,6 +2,45 @@
 一款加密货币的投资和管理平台。
 
 A cryptocurrency investment and management platform.
+## 安装说明
+
+1. 克隆仓库
+首先，您需要从GitHub克隆仓库到本地计算机。打开终端（在Linux/macOS）或命令提示符/PowerShell（在Windows）并运行以下命令：
+
+bash
+Copy code
+git clone https://github.com/RootSherry/NK_CryptoManage.git
+cd NK_CryptoManage
+请替换 https://github.com/yourusername/NK_CryptoManage.git 为实际的仓库URL。
+
+2. 创建虚拟环境
+为了避免影响到您的全局Python环境，推荐在一个虚拟环境中安装本项目。使用以下命令创建一个新的虚拟环境：
+
+bash
+Copy code
+python -m venv venv
+激活虚拟环境：
+
+在Windows上：
+cmd
+Copy code
+venv\Scripts\activate
+在Linux或macOS上：
+bash
+Copy code
+source venv/bin/activate
+3. 安装依赖
+项目的依赖在 requirements.txt 文件中列出。安装这些依赖，请确保您的虚拟环境已激活，然后执行：
+
+bash
+Copy code
+pip install -r requirements.txt
+4. 运行平台
+一旦依赖安装完成，您就可以启动平台了。具体运行命令取决于您的项目结构和入口脚本，假设主脚本名为 main.py，运行：
+
+bash
+Copy code
+python main.py
 # 平台功能
 
 ### **主页：**![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/DaY0O4fUnGk7hQeiBDiw7aoOOdlLaq4CI1C1e83f.png?imageMogr2/thumbnail/500x500 "219024")
