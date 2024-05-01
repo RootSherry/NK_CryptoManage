@@ -7,13 +7,11 @@ A cryptocurrency investment and management platform.
 1. 克隆仓库
 首先，您需要从GitHub克隆仓库到本地计算机。打开终端（在Linux/macOS）或命令提示符/PowerShell（在Windows）并运行以下命令：
 
-bash
-Copy code
+```python
 git clone https://github.com/RootSherry/NK_CryptoManage.git
 cd NK_CryptoManage
-请替换 https://github.com/yourusername/NK_CryptoManage.git 为实际的仓库URL。
 
-2. 创建虚拟环境
+3. 创建虚拟环境
 为了避免影响到您的全局Python环境，推荐在一个虚拟环境中安装本项目。使用以下命令创建一个新的虚拟环境：
 
 bash
