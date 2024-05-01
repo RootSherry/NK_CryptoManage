@@ -58,7 +58,9 @@ python3 curve_run.py
 - 使用说明写在了界面上
 - 可以在查询界面中，查询不同账号的购买记录、买入总量以及平均买入成本
 
-![c35f95505dc8b0ae6e69543c2d170ec.jpg](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/ku7klsv8RrtdXsqoqsa26PGfd5D4UlyxK0wds8tT.jpg?imageMogr2/thumbnail/500x500 "219025")![image.png](https://bbs-quantclass-cn-1253788117.file.myqcloud.com/public/attachments/2024/01/26/EnJuS74FAXBUsFrpPLGoJHZuaohg7GSd4bRJ6JmR.png?imageMogr2/thumbnail/500x500 "219026")
+<img width="1718" alt="image" src="https://github.com/RootSherry/NK_CryptoManage/assets/121684306/1bcb9dbd-6eb9-42aa-b44e-279a7b05cf3e">
+<img width="1370" alt="image" src="https://github.com/RootSherry/NK_CryptoManage/assets/121684306/32399f39-15de-4bb8-bc95-471fa5344037">
+
 
 ### 转账：
 
