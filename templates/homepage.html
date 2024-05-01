@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主页 - NK加密货币投资管理平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+            margin: 0;
+            font-size: 24px;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            color: white;
+        }
+        .user-info span {
+            margin-right: 10px;
+        }
+        .logout {
+            padding: 5px 10px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .logout:hover {
+            background-color: #c82333;
+        }
+        .nav {
+            padding: 20px;
+            background-color: #fff;
+            text-align: center;
+        }
+        .nav a {
+            display: inline-block;
+            margin: 10px 15px;
+            padding: 10px 20px;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .nav a.purchase { background-color: #28a745; }
+        .nav a.transfer { background-color: #17a2b8; }
+        .nav a.query { background-color: #ffc107; }
+        .nav a.manage { background-color: #6c757d; }
+        .nav a.feedback { background-color: #6c757d; }
+        .nav a:hover {
+            opacity: 0.8;
+        }
+        .updates, .upcoming-features {
+            background: #fff;
+            margin: 20px auto;
+            width: 60%;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            border-left: 5px solid;
+            margin-bottom: 30px;
+        }
+        .updates {
+            border-color: #28a745;
+        }
+        .upcoming-features {
+            border-color: #ff9800;
+        }
+        .updates h3, .upcoming-features h3 {
+            color: #007bff;
+        }
+        .updates ul, .upcoming-features ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .updates li, .upcoming-features li {
+            margin-bottom: 10px;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+        }
+        .upcoming-features ul {
+            height: 80px; /* 可根据需要调整 */
+            overflow: hidden;
+        }
+        .scroll-list {
+            max-height: 150px; /* 可调整的最大高度 */
+            overflow-y: auto; /* 启用垂直滚动 */
+        }
+        .scroll-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .scroll-list::-webkit-scrollbar-thumb {
+            background: #007bff;
+            border-radius: 5px;
+        }
+        .scroll-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .info-box {
+            background-color: #fffbcc;
+            border-left: 4px solid #ffcc00;
+            padding: 10px;
+            margin: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .fa-bitcoin {
+            color: #f2a900; /* 比特币的标志性颜色 */
+            margin-right: 5px;
+        }
+
+        .countdown-box {
+            text-align: center;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #countdown {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #countdown span {
+            color: #007bff;
+            margin: 0 5px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .header-title {
+                font-size: 20px;
+            }
+            .nav a {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            .updates, .upcoming-features {
+                width: 90%;
+                margin: 15px auto;
+            }
+            .info-box {
+                font-size: 12px;
+            }
+            .footer {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-title">
+        <h1>BTC to the moon!</h1>
+    </div>
+    <div class="user-info">
+        <span>{{ username }}</span>
+        <a href="{{ url_for('logout') }}" class="logout">注销</a>
+    </div>
+</div>
+
+<div class="nav">
+    <a href="/purchase" class="purchase"><i class="fa fa-shopping-cart"></i> 购买</a>
+    <a href="/transfer" class="transfer"><i class="fa fa-exchange-alt"></i> 转账</a>
+    <a href="/query" class="query"><i class="fa fa-search"></i> 查询</a>
+    <a href="/manage" class="manage"><i class="fa fa-tools"></i> 管理</a>
+    <a href="/feedbacks" class="feedback"><i class="fa fa-comments"></i> 意见箱</a>
+</div>
+
+<div class="countdown-box">
+    <h3><img src="data:image/jpeg;base64,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" alt="Bitcoin" style="height:24px; vertical-align:middle;"> BTC减半倒计时</h3>
+    <div id="countdown">
+        <span id="days"></span>天
+        <span id="hours"></span>小时
+        <span id="minutes"></span>分钟
+        <span id="seconds"></span>秒
+    </div>
+</div>
+
+
+<div class="updates">
+    <h3>最近更新</h3>
+    <ul class="scroll-list">
+        {% for update in updates %}
+        <li>{{ update }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="upcoming-features">
+    <h3>即将添加的功能</h3>
+    <ul id="features-list">
+        {% for feature in upcoming_features.features %}
+        <li>{{ feature }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="info-box">
+    <p>提示：在使用前，先在管理中添加账户。若只使用查询功能，填写只读API即可。若要使用交易功能，需填写交易权限的API。</p>
+</div>
+
+<div class="footer">
+    <p>&copy; 2023 NK加密货币管理平台</p>
+</div>
+
+<script>
+    function updateCountdown() {
+        const halvingDate = new Date("2024-04-18T03:00:00"); // 请根据实际情况调整比特币减半的日期
+        const now = new Date();
+        const diff = halvingDate - now;
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById("days").innerText = days;
+        document.getElementById("hours").innerText = hours;
+        document.getElementById("minutes").innerText = minutes;
+        document.getElementById("seconds").innerText = seconds;
+    }
+
+    setInterval(updateCountdown, 1000);
+</script>
+
+</body>
+</html>

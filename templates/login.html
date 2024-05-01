@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 添加视口元标签 -->
+    <title>登录 - NK加密货币投资平台</title> <!-- 更新标题 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding-top: 50px;
+            text-align: center;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            margin: auto;
+            max-width: 400px; /* 调整宽度以适应不同屏幕 */
+            width: 90%; /* 适应小屏幕 */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 { color: #007bff; }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px; /* 增加填充以改善触摸体验 */
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>NK加密货币投资平台</h1>
+    <h2>登录</h2>
+    <form action="/login" method="post">
+        <input type="text" id="username" name="username" placeholder="用户名" required><br>
+        <input type="password" id="password" name="password" placeholder="密码" required><br>
+        <input type="submit" value="登录">
+        <p>还没有账号？<a href="/register">注册</a></p>
+    </form>
+</div>
+
+</body>
+</html>

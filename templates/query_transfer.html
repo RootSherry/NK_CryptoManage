@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>转账记录查询 - NK量化投资管理平台</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            margin: auto;
+            width: 80%;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .summary {
+            margin-top: 20px;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>转账记录查询</h1>
+        <label for="account-select">选择账户:</label>
+        <select id="account-select">
+            {% for account in accounts %}
+            <option value="{{ account }}">{{ account }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- 时间选择器 -->
+        <div>
+            <label for="start-date">开始日期:</label>
+            <input type="date" id="start-date">
+            <label for="end-date">结束日期:</label>
+            <input type="date" id="end-date">
+            <button onclick="loadTransferRecord()">查询</button>
+        </div>
+
+        <div class="summary">
+            <h3>累计转出数量: <span id="total-out"></span></h3>
+            <h3>累计转入数量: <span id="total-in"></span></h3>
+        </div>
+        <table id="records-table">
+            <tr>
+                <th>转账时间</th>
+                <th>转出账户</th>
+                <th>转入账户</th>
+                <th>币种</th>
+                <th>数量</th>
+            </tr>
+            <!-- 转账记录数据将在这里插入 -->
+        </table>
+        <a href="{{ url_for('homepage') }}" class="back-button">返回主页</a>
+    </div>
+
+    <script>
+        function loadTransferRecord() {
+            var account = document.getElementById('account-select').value;
+            var startDate = document.getElementById('start-date').value;
+            var endDate = document.getElementById('end-date').value;
+
+            fetch(`/get_transfer_record/${account}?start=${startDate}&end=${endDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateTable(data.records);
+                    updateSummary(data.total_out_by_currency, data.total_in_by_currency);
+                });
+        }
+
+        function updateTable(records) {
+            var table = document.getElementById('records-table');
+            table.innerHTML = `<tr>
+                <th>转账时间</th>
+                <th>转出账户</th>
+                <th>转入账户</th>
+                <th>币种</th>
+                <th>数量</th>
+            </tr>`; // 添加表头
+        
+            records.reverse().forEach(record => {
+                var row = `<tr>
+                    <td>${record['转账时间']}</td>
+                    <td>${record['转出账户']}</td>
+                    <td>${record['转入账户']}</td>
+                    <td>${record['币种']}</td>
+                    <td>${record['数量']}</td>
+                </tr>`;
+                table.innerHTML += row;
+            });
+        }
+
+        function updateSummary(totalOutByCurrency, totalInByCurrency) {
+            var totalOutText = Object.entries(totalOutByCurrency)
+                                     .map(([currency, amount]) => `${amount} ${currency}`)
+                                     .join(', ');
+            var totalInText = Object.entries(totalInByCurrency)
+                                    .map(([currency, amount]) => `${amount} ${currency}`)
+                                    .join(', ');
+
+            document.getElementById('total-out').textContent = totalOutText;
+            document.getElementById('total-in').textContent = totalInText;
+        }
+
+        // 页面加载时，自动加载第一个账户的记录
+        window.onload = () => {
+            loadTransferRecord();
+        };
+    </script>
+</body>
+</html>

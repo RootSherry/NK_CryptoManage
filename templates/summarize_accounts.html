@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>所有账户的总体信息</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding-top: 50px;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            margin: auto;
+            width: 80%;
+            max-width: 500px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+        .balance-info {
+            text-align: left;
+            margin-top: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #e7f3ff;
+            border: 1px solid #bde0fe;
+            border-radius: 4px;
+        }
+        h1, h3 {
+            color: #007bff;
+        }
+        a {
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+        @media screen and (max-width: 600px) {
+            .container {
+                width: 95%;
+            }
+            h1, h3, li, a {
+                font-size: 1.2em;
+            }
+            body {
+                padding-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>所有账户的总体信息</h1>
+        <div class="balance-info">
+            {{ message|safe }}
+        </div>
+        <a href="{{ url_for('homepage') }}">返回首页</a>
+    </div>
+</body>
+</html>

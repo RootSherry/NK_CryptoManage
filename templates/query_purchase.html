@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>购买记录查询 - NK量化投资管理平台</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            margin: auto;
+            width: 80%;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .total-purchases {
+            background-color: #e2e3e5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>购买记录查询</h1>
+        <label for="account-select">选择账户:</label>
+        <select id="account-select" onchange="loadPurchaseRecord()">
+            {% for account in accounts %}
+            <option value="{{ account }}">{{ account }}</option>
+            {% endfor %}
+        </select>
+        <div class="total-purchases">
+            <h3>累计购买统计</h3>
+            <table id="total-purchases-table">
+                <tr>
+                    <th>币种</th>
+                    <th>数量</th>
+                    <th>价值(U)</th>
+                    <th>平均买入成本(U)</th>
+                </tr>
+                <!-- 累计购买统计数据将在这里插入 -->
+            </table>
+        </div>
+        <table id="records-table">
+            <tr>
+                <th>购买时间</th>
+                <th>账户</th>
+                <th>币种</th>
+                <th>数量</th>
+                <th>价值(U)</th>
+                <th>价格(U)</th>
+                <th>操作</th>
+            </tr>
+            <!-- 购买记录数据将在这里插入 -->
+        </table>
+        <a href="{{ url_for('homepage') }}" class="back-button">返回主页</a>
+    </div>
+
+    <script>
+        function loadPurchaseRecord() {
+            var account = document.getElementById('account-select').value;
+            fetch('/get_purchase_record/' + account)
+                .then(response => response.json())
+                .then(data => {
+                    updateTotalPurchases(data.total_purchases);
+                    updateTable(data.records);
+                });
+        }
+
+        function updateTotalPurchases(totalPurchases) {
+            var totalTable = document.getElementById('total-purchases-table');
+            totalTable.innerHTML = `<tr>
+                <th>币种</th>
+                <th>数量</th>
+                <th>价值(U)</th>
+                <th>平均买入成本(U)</th>
+            </tr>`; // 重置表格内容
+            totalPurchases.forEach(purchase => {
+                var row = `<tr>
+                    <td>${purchase['币种']}</td>
+                    <td>${purchase['数量']}</td>
+                    <td>${purchase['价值(U)']}</td>
+                    <td>${purchase['平均买入成本(U)'].toFixed(2)}</td>
+                </tr>`;
+                totalTable.innerHTML += row;
+            });
+        }
+
+        function updateTable(records) {
+            var table = document.getElementById('records-table');
+            table.innerHTML = `<tr>
+                <th>购买时间</th>
+                <th>账户</th>
+                <th>币种</th>
+                <th>数量</th>
+                <th>价值(U)</th>
+                <th>价格(U)</th>
+                <th>操作</th>
+            </tr>`; // 添加表头
+            records.reverse().forEach(record => {
+                var row = `<tr>
+                    <td>${record['购买时间']}</td>
+                    <td>${record['账户']}</td>
+                    <td>${record['币种']}</td>
+                    <td>${record['数量']}</td>
+                    <td>${record['价值(U)']}</td>
+                    <td>${record['价格(U)'].toFixed(2)}</td>
+                    <td>${record['操作']}</td>
+                </tr>`;
+                table.innerHTML += row;
+            });
+        }
+
+        // 页面加载时，自动加载第一个账户的记录
+        window.onload = () => {
+            loadPurchaseRecord();
+        };
+    </script>
+</body>
+</html>

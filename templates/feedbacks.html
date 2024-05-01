@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>意见箱 - NK量化投资管理平台</title>
+    <!-- 引入 Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .feedback-entry {
+            background-color: #eef2f7;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .info-box {
+            background-color: #fffbcc;
+            border-left: 4px solid #ffcc00;
+            padding: 10px;
+            margin: 20px 0;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+
+
+        <div class="feedbacks-container">
+            <h1 class="text-center mb-4">意见箱</h1>
+            {% for feedback in feedbacks %}
+                <div class="feedback-entry">
+                    <p>{{ feedback }}</p>
+                    {% if session['username'] in feedback %}
+                        <form action="/delete_feedback" method="post">
+                            <input type="hidden" name="feedback" value="{{ feedback }}">
+                            <button type="submit" class="btn btn-danger delete-btn">删除</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <a href="/" class="btn btn-secondary mt-3">返回主页</a>
+        </div>
+
+        <div class="new-feedback-form mt-5">
+            <h2 class="text-center mb-3">添加新意见</h2>
+            <form action="/submit_feedback" method="post">
+                <textarea class="form-control" name="feedback" placeholder="请输入您的意见..." rows="4"></textarea>
+                <button type="submit" class="btn btn-success mt-3">提交意见</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 引入 Bootstrap JavaScript 和依赖 -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>管理账户</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 添加视口元标签 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> <!-- 引入图标库 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding-top: 20px;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            margin: auto;
+            width: 100%; /* 容器宽度调整为100% */
+            max-width: 500px; /* 最大宽度为500px */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        input, select, button {
+            width: calc(100% - 20px); /* 输入框和按钮宽度调整 */
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* 确保宽度包括内边距 */
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .tab {
+            width: auto; /* Tab宽度调整为自动 */
+            margin: 5px 0;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            display: inline-block; /* 保持水平对齐 */
+            transition: background-color 0.3s;
+        }
+        .tab:hover {
+            background-color: #0056b3;
+        }
+        .active-tab {
+            background-color: #0056b3;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .tab-container {
+            display: flex; /* 调整为弹性布局 */
+            justify-content: space-around; /* 元素均匀分布 */
+            flex-wrap: wrap; /* 允许换行 */
+        }
+        .info-box {
+            background-color: #fffbcc;
+            border-left: 4px solid #ffcc00;
+            padding: 10px;
+            margin: 15px auto; /* 设置水平外边距为auto */
+            text-align: center;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 100%; /* 将最大宽度设置为100% */
+        }
+        .back-button {
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            display: block; /* 改为块级元素 */
+            width: calc(100% - 20px); /* 宽度调整 */
+            box-sizing: border-box; /* 包含内边距和边框 */
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+        .container-footer {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>管理账户</h1>
+    <div class="info-box">
+        <p><strong>注意：</strong>必须填写主账号，且命名为Root，否则无法完成转账操作。</p>
+    </div>
+
+    <div class="tab-container">
+        <button class="tab" onclick="openTab('add')"><i class="fas fa-plus"></i> 添加账户</button>
+        <button class="tab" onclick="openTab('update')"><i class="fas fa-edit"></i> 更新账户</button>
+        <button class="tab" onclick="openTab('delete')"><i class="fas fa-trash-alt"></i> 删除账户</button>
+    </div>
+
+    <div id="add" class="tab-content">
+        <form method="POST" action="{{ url_for('manage_accounts') }}">
+            <input type="text" name="new_account_name" placeholder="新账户名">
+            <input type="text" name="new_apiKey" placeholder="API Key">
+            <input type="text" name="new_secret" placeholder="Secret">
+            <input type="text" name="new_email" placeholder="Email">
+            <button type="submit" name="action" value="add">添加账户</button>
+        </form>
+    </div>
+
+    <div id="update" class="tab-content">
+        <form method="POST" action="{{ url_for('manage_accounts') }}">
+            <select id="update-account-select" name="account_name" onchange="updateAccountInfo()">
+                {% for account, details in accounts.items() %}
+                <option value="{{ account }}" data-apikey="{{ details.apiKey }}" data-secret="{{ details.secret }}" data-email="{{ details.email }}">{{ account }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" id="update-apiKey" name="apiKey" placeholder="API Key">
+            <input type="text" id="update-secret" name="secret" placeholder="Secret">
+            <input type="text" id="update-email" name="email" placeholder="Email">
+            <button type="submit" name="action" value="update">更新信息</button>
+        </form>
+    </div>
+
+    <div id="delete" class="tab-content">
+        <form method="POST" action="{{ url_for('manage_accounts') }}">
+            <select name="account_name">
+                {% for account in accounts %}
+                <option value="{{ account }}">{{ account }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" name="action" value="delete">删除账户</button>
+        </form>
+    </div>
+
+    <div class="container-footer">
+        <a href="homepage" class="back-button"><i class="fas fa-arrow-left"></i> 返回</a>
+    </div>
+</div>
+
+<script>
+    function openTab(tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tab");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active-tab", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        document.getElementById(tabName + "-tab").className += " active-tab";
+    }
+
+    function updateAccountInfo() {
+        var select = document.getElementById('update-account-select');
+        var selectedAccount = select.options[select.selectedIndex].dataset;
+        document.getElementById('update-apiKey').value = selectedAccount.apikey;
+        document.getElementById('update-secret').value = selectedAccount.secret;
+        document.getElementById('update-email').value = selectedAccount.email;
+    }
+
+    // 默认打开第一个标签
+    openTab('add');
+</script>
+
+</body>
+</html>

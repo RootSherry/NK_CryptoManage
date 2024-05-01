@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查询 - NK量化投资管理平台</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #007bff;
+            overflow: hidden;
+            padding: 10px 0;
+        }
+        .navbar a {
+            float: left;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        .navbar a:hover {
+            background-color: #0056b3;
+        }
+        .container {
+            max-width: 100%; /* 调整为百分比 */
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+            box-sizing: border-box; /* 确保内边距包含在宽度内 */
+        }
+        .query-option {
+            display: block;
+            margin: 10px auto; /* 减小上下外边距 */
+            padding: 10px 20px; /* 减小内边距 */
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px; /* 可根据需要调整字体大小 */
+            transition: background-color 0.3s ease;
+            width: 70%; /* 减小宽度 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .query-option:hover {
+            background-color: #0056b3;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+        .info-box {
+            background-color: #fffbcc;
+            border-left: 4px solid #ffcc00;
+            padding: 10px;
+            margin: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+        @media screen and (max-width: 600px) {
+            .query-option {
+                width: calc(100% - 40px); /* 减去左右内边距 */
+            }
+            .navbar a, .back-button {
+                padding: 12px; /* 调整为更小的内边距 */
+            }
+            .info-box {
+                margin: 10px; /* 减小外边距 */
+                padding: 10px;
+            }
+        }
+        /* 图标样式 */
+        .icon {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <!-- 导航栏链接可以在这里添加 -->
+</div>
+
+<div class="info-box">
+    <p>在使用前，请在管理中添加账户。若只使用查询功能，填写只读API。若要使用交易功能，需填写交易权限的API。</p>
+</div>
+
+<div class="container">
+    <h1>查询功能</h1>
+    <a href="{{ url_for('query_balance') }}" class="query-option"><span class="icon">🔍</span>查询账户余额</a>
+    <a href="/query_transfer" class="query-option"><span class="icon">🔄</span>查询转账记录</a>
+    <a href="/query_purchase" class="query-option"><span class="icon">💰</span>查询购买记录</a>
+    <a href="/query_strategy" class="query-option"><span class="icon">📈</span>查询策略表现</a>
+    <a href="{{ url_for('homepage') }}" class="back-button">返回</a>
+</div>
+
+</body>
+</html>

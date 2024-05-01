@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 添加视口元标签 -->
+    <title>转账</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            font-size: 16px; /* 增加基础字体大小 */
+        }
+        h1 {
+            color: #333;
+            font-size: 1.5em; /* 增大标题字体大小 */
+        }
+        form {
+            background: rgba(255, 255, 255, 0.99);
+            padding: 20px;
+            border-radius: 8px;
+            box-sizing: border-box; /* 确保宽度包括padding */
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1em; /* 调整标签字体大小 */
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 1em; /* 调整按钮字体大小 */
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 1em; /* 调整按钮字体大小 */
+            cursor: pointer;
+        }
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
+        .info-box {
+            background-color: #fffbcc;
+            padding: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #ffcc00;
+            font-size: 0.9em; /* 调整提示框字体大小 */
+        }
+    </style>
+</head>
+<body>
+    <h1>转账</h1>
+    <div class="info-box">
+        <strong>操作提示：</strong>转账操作会优先使用转出账户的现货余额。如果余额不足，系统会自动从U本位合约账户中划转补充。转入账户收到资金后，会自动将其转入U本位合约账户中，以便于统一管理。
+    </div>
+    <form action="/transfer" method="post">
+        <label for="from_account">转出账户:</label>
+        <select id="from_account" name="from_account">
+            {% for account in accounts %}
+            <option value="{{ account }}">{{ account }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="to_account">转入账户:</label>
+        <select id="to_account" name="to_account">
+            {% for account in accounts %}
+            <option value="{{ account }}">{{ account }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="amount">转移数量:</label>
+        <input type="text" id="amount" name="amount"><br><br>
+
+        <label for="currency">转账币种:</label>
+        <select id="currency" name="currency">
+            <option value="USDT">USDT</option>
+            <option value="BTC">BTC</option>
+            <option value="ETH">ETH</option>
+            <option value="BNB">BNB</option>
+        </select><br><br>
+
+        <input type="submit" value="确认">
+    </form>
+
+    <a href="/" class="back-btn">返回主页</a>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>查询策略表现 - NK量化投资管理平台</title>
+    <!-- 引入 Plotly.js 和 jQuery -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            background: #fff;
+            margin: 20px auto;
+            width: 90%;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        select {
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 50%;
+        }
+        #chart-container {
+            display: block; /* 改为block布局 */
+        }
+
+        #chart {
+            width: 100%; /* 图表宽度调整为100% */
+            height: 500px;
+        }
+
+        #indicators-table {
+            width: 100%; /* 指标表宽度调整为100% */
+            height: auto; /* 高度改为自动 */
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 20px; /* 添加上边距 */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+        .back-button {
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="query" class="back-button">返回</a>
+    <h1>查询策略表现</h1>
+    <select id="account-select">
+        <!-- 选项应由服务器端动态生成 -->
+        {% for account in accounts %}
+            <option value="{{ account }}">{{ account }}</option>
+        {% endfor %}
+    </select>
+    <div id="chart-container">
+        <div id="chart"></div>
+        <div id="indicators-table"></div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#account-select').change(function() {
+            var accountName = $(this).val();
+            $.ajax({
+                url: '/get_strategy_data',
+                type: 'POST',
+                data: { account_name: accountName },
+                success: function(response) {
+                    var trace1 = {
+                        x: response['time'],
+                        y: response['资金曲线'],
+                        mode: 'lines',
+                        name: '资金曲线',
+                        line: {color: 'darkviolet'}
+                    };
+                    var trace2 = {
+                        x: response['time'],
+                        y: response['回撤'],
+                        yaxis: 'y2',
+                        mode: 'lines',
+                        name: '回撤',
+                            line: {
+                                color: 'lightPink', // 设置为浅粉色
+                                opacity: 0.5 // 设置透明度以使颜色更淡
+                            }
+                    };
+                    var layout = {
+                        title: '资金曲线与回撤',
+                        xaxis: {title: '时间'},
+                        yaxis: {title: '资金曲线'},
+                        yaxis2: {
+                            title: '回撤',
+                            overlaying: 'y',
+                            side: 'right'
+                        }
+                    };
+                    Plotly.newPlot('chart', [trace1, trace2], layout);
+
+                    // 展示指标
+                    createIndicatorsTable(response['indicators'], response['indicators_order']);
+                },
+                error: function(xhr, status, error) {
+                    console.log("Error:", error);
+                }
+            });
+        });
+
+        $('#account-select').change(); // 触发初始选项的更改事件以加载初始数据
+    });
+
+    function createIndicatorsTable(indicators, order) {
+        var headerRow = '<tr>';
+        var valueRow = '<tr>';
+        order.forEach(function(key) {
+            var value = indicators[key];
+            headerRow += '<th>' + key + '</th>';
+            valueRow += '<td>' + (typeof value === 'number' ? value.toFixed(4) : value) + '</td>';
+        });
+        headerRow += '</tr>';
+        valueRow += '</tr>';
+        var table = '<table>' + headerRow + valueRow + '</table>';
+        $('#indicators-table').html(table);
+    }
+</script>
+
+</body>
+</html>

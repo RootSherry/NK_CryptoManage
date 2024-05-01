@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>消息 - NK量化投资管理平台</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding-top: 50px;
+        }
+        .container {
+            background: #fff;
+            margin: auto;
+            width: 400px; /* 增加宽度 */
+            padding: 30px; /* 增加内边距 */
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 15px; /* 调整间距 */
+        }
+        .message {
+            font-size: 18px; /* 增加字体大小 */
+            color: #555; /* 调整颜色 */
+            margin-bottom: 20px;
+        }
+        #countdown {
+            margin-top: 20px; /* 调整间距 */
+            font-weight: bold;
+            color: #007bff; /* 增加颜色 */
+        }
+        .back-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="message">
+        <h1>消息</h1>
+        <p>{{ message }}</p>
+        <div id="countdown"></div>
+        <a href="/" class="back-btn">返回主页</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var countdownElement = document.getElementById('countdown');
+        var countdownTime = {{ delay }};
+        var redirectUrl = "{{ redirect_url }}";
+
+        function updateCountdown() {
+            countdownElement.textContent = '页面将在 ' + countdownTime + ' 秒后跳转。';
+            if (countdownTime <= 0) {
+                window.location.href = redirectUrl;
+            } else {
+                countdownTime--;
+            }
+        }
+
+        updateCountdown();
+        var intervalId = setInterval(updateCountdown, 1000);
+
+        window.onbeforeunload = function() {
+            clearInterval(intervalId);
+        };
+    });
+</script>
+
+</body>
+</html>

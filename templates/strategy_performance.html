@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>策略表现</title>
+    <!-- 引入 Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <select id="account-select">
+        <option value="account1">账户1</option>
+        <option value="account2">账户2</option>
+        <!-- 其他账户选项 -->
+    </select>
+
+    <div id="chart"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#account-select').change(function() {
+                var accountName = $(this).val();
+                $.post('/get_chart_data', {account_name: accountName}, function(response) {
+                    $('#chart').html(response.graph_html);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
