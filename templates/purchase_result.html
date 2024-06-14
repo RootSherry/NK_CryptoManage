@@ -47,7 +47,9 @@
 <body>
     <div class="result-container">
         <h1>购买结果</h1>
-        <pre class="message">{{ message }}</pre> <!-- 使用 pre 标签显示消息 -->
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
         <a href="{{ url_for('homepage') }}" class="back-btn">返回主页</a>
     </div>
 </body>
