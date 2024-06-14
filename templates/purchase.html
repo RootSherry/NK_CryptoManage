@@ -79,15 +79,115 @@
             {% endfor %}
         </select><br><br>
 
-        <label for="purchase_currency">购买币种:</label>
-        <input type="text" id="purchase_currency" name="purchase_currency" placeholder="例如：BTC, ETH, SOL"><br><br>
+        <label for="portfolio">选择投资组合:</label>
+        <select id="portfolio" name="portfolio" onchange="loadPortfolio()">
+            <option value="">新建组合</option>
+            {% for portfolio in portfolios %}
+            <option value="{{ portfolio }}">{{ portfolio }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <div id="portfolio-details" style="display: none;">
+            <h3>投资组合详情:</h3>
+            <div id="portfolio-content"></div>
+        </div>
+
+        <div id="new-portfolio">
+            <label for="portfolio_name">组合名称:</label>
+            <input type="text" id="portfolio_name" name="portfolio_name" placeholder="组合名称"><br><br>
+
+            <label for="purchase_currency">购买币种及比例:</label>
+            <div id="currency-list">
+                <input type="text" name="currencies[]" placeholder="币种 例如：BTC">
+                <input type="number" name="ratios[]" placeholder="比例 例如：0.5" step="0.01" min="0" max="1">
+                <button type="button" onclick="addCurrency()">添加币种</button>
+            </div>
+        </div><br><br>
 
         <label for="amount">购买金额:</label>
         <input type="text" id="amount" name="amount" placeholder="购买多少U的"><br><br>
 
         <input type="submit" value="确认购买">
     </form>
+    <form action="/save_portfolio" method="post">
+        <input type="hidden" name="portfolio_name" id="hidden_portfolio_name">
+        <input type="hidden" name="currencies" id="hidden_currencies">
+        <input type="hidden" name="ratios" id="hidden_ratios">
+        <button type="button" onclick="savePortfolio()">保存组合</button>
+    </form>
+    <form action="/delete_portfolio" method="post">
+        <input type="hidden" name="portfolio_name" id="delete_portfolio_name">
+        <button type="button" onclick="deletePortfolio()">删除组合</button>
+    </form>
 
     <a href="/" class="back-btn">返回主页</a>
+    <script>
+        const portfolios = {{ portfolios | tojson }};
+
+        function loadPortfolio() {
+            const selectedPortfolio = document.getElementById('portfolio').value;
+            const newPortfolio = document.getElementById('new-portfolio');
+            const portfolioDetails = document.getElementById('portfolio-details');
+            const portfolioContent = document.getElementById('portfolio-content');
+
+            if (selectedPortfolio) {
+                newPortfolio.style.display = 'none';
+                portfolioDetails.style.display = 'block';
+
+                const portfolio = portfolios[selectedPortfolio];
+                portfolioContent.innerHTML = '';
+                for (const [currency, ratio] of Object.entries(portfolio)) {
+                    const div = document.createElement('div');
+                    div.textContent = `${currency}: ${ratio * 100}%`;
+                    portfolioContent.appendChild(div);
+                }
+            } else {
+                newPortfolio.style.display = 'block';
+                portfolioDetails.style.display = 'none';
+            }
+        }
+
+        function addCurrency() {
+            const currencyList = document.getElementById('currency-list');
+            const currencyDiv = document.createElement('div');
+            currencyDiv.innerHTML = '<input type="text" name="currencies[]" placeholder="币种 例如：BTC"> <input type="number" name="ratios[]" placeholder="比例 例如：0.5" step="0.01" min="0" max="1"> <button type="button" onclick="removeCurrency(this)">删除</button>';
+            currencyList.appendChild(currencyDiv);
+        }
+
+        function removeCurrency(button) {
+            button.parentElement.remove();
+        }
+
+        function savePortfolio() {
+            const portfolioName = document.getElementById('portfolio_name').value;
+            const currencyInputs = document.querySelectorAll('input[name="currencies[]"]');
+            const ratioInputs = document.querySelectorAll('input[name="ratios[]"]');
+
+            if (!portfolioName || currencyInputs.length === 0 || ratioInputs.length === 0) {
+                alert("请填写完整的组合信息");
+                return;
+            }
+
+            const currencies = Array.from(currencyInputs).map(input => input.value);
+            const ratios = Array.from(ratioInputs).map(input => parseFloat(input.value));
+
+            document.getElementById('hidden_portfolio_name').value = portfolioName;
+            document.getElementById('hidden_currencies').value = JSON.stringify(currencies);
+            document.getElementById('hidden_ratios').value = JSON.stringify(ratios);
+
+            document.querySelector('form[action="/save_portfolio"]').submit();
+        }
+
+        function deletePortfolio() {
+            const portfolioName = document.getElementById('portfolio').value;
+            if (!portfolioName) {
+                alert("请选择一个组合进行删除");
+                return;
+            }
+
+            document.getElementById('delete_portfolio_name').value = portfolioName;
+            document.querySelector('form[action="/delete_portfolio"]').submit();
+        }
+    </script>
 </body>
 </html>
