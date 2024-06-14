@@ -9,12 +9,13 @@ import os
 import math
 import numpy as np
 import itertools
+import threading
 
 app = Flask(__name__)
 # 设置一个安全的密钥，用于保护 session
 # 请在生产应用中使用一个难以猜测的随机字符串，并保持秘密
 app.secret_key = '66666y'
-
+lock = threading.Lock()
 invest_instance = Invest()
 
 # 读取和写入 JSON 文件的函数
@@ -230,7 +231,7 @@ def query_balance():
             selected_account_name = request.form.get('account')
             if selected_account_name in user_accounts:
                 account_config = user_accounts[selected_account_name]
-                message,total_spot_value_in_u, total_equity_value_in_u, total_margin_value_in_u = invest_instance.get_account_balance_message(account_config)
+                message, spot_balance, equity_balance, margin_value_in_u, spot_holdings, equity_holdings, margin_holdings = invest_instance.get_account_balance_message(account_config)
             else:
                 message = "选择的账户不存在。"
     except FileNotFoundError:
@@ -644,29 +645,112 @@ def get_purchase_record(account):
     else:
         return jsonify({'records': [], 'total_purchases': []})
 
-
-
-
 @app.route('/purchase', methods=['GET', 'POST'])
 def purchase():
     if 'username' not in session:
-        return redirect(url_for('login'))  # 未登录，重定向到登录页面
+        return redirect(url_for('login'))
 
-    username = session['username']  # 从会话中获取用户名
-    print(session['username'])
-    # 读取配置文件以获取当前登录用户的账户列表
-    with open('users.json', 'r', encoding='utf-8') as file:
-        config = json.load(file)
-        user_accounts = config["users"][username]["accounts"]  # 获取当前用户的账户
+    username = session['username']
+    with lock:
+        with open('users.json', 'r', encoding='utf-8') as file:
+            config = json.load(file)
+        user_accounts = config["users"][username]["accounts"]
+        user_portfolios = config["users"][username].get("portfolios", {})
 
     if request.method == 'POST':
         payment_account = request.form['payment_account']
-        purchase_currency = request.form['purchase_currency']
-        amount = request.form['amount']
-        message = invest_instance.perform_purchase(username, payment_account, purchase_currency, amount)
-        return render_template('purchase_result.html', message=message)
+        portfolio_name = request.form.get('portfolio_name')
+        try:
+            amount = float(request.form['amount'])
+        except ValueError:
+            return "Invalid amount", 400
+
+        if portfolio_name and portfolio_name not in user_portfolios:  # 新建组合
+            currencies = request.form.getlist('currencies[]')
+            ratios = []
+            try:
+                ratios = [float(r) for r in request.form.getlist('ratios[]')]
+            except ValueError:
+                return "Invalid ratio", 400
+
+            ratios_sum = sum(ratios)
+            print(f"Debug: Ratios sum is {ratios_sum}")  # 调试信息
+
+            if ratios_sum != 1:
+                return f"比例之和必须为1，目前只有{ratios_sum}", 400
+
+            portfolio = dict(zip(currencies, ratios))
+            user_portfolios[portfolio_name] = portfolio
+
+            with lock:
+                with open('users.json', 'w', encoding='utf-8') as file:
+                    config["users"][username]["portfolios"] = user_portfolios
+                    json.dump(config, file, ensure_ascii=False, indent=4)
+        else:  # 选择已有组合
+            portfolio_name = request.form['portfolio']
+            portfolio = user_portfolios[portfolio_name]
+
+        # 根据组合比例购买币种
+        messages = []
+        for currency, ratio in portfolio.items():
+            purchase_amount = amount * ratio
+            message = invest_instance.perform_purchase(username, payment_account, currency, purchase_amount)
+            messages.append(message)
+
+        return render_template('purchase_result.html', messages=messages)
     else:
-        return render_template('purchase.html', accounts=user_accounts)
+        return render_template('purchase.html', accounts=user_accounts, portfolios=user_portfolios)
+
+@app.route('/save_portfolio', methods=['POST'])
+def save_portfolio():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    portfolio_name = request.form['portfolio_name']
+    try:
+        currencies = json.loads(request.form['currencies'])  # 确保字段名与前端一致
+        ratios = [float(r) for r in json.loads(request.form['ratios'])]  # 确保字段名与前端一致
+    except (json.JSONDecodeError, ValueError) as e:
+        return f"Invalid input: {e}", 400
+
+    # 计算比例之和并检查是否等于1
+    ratios_sum = sum(ratios)
+    if ratios_sum != 1:
+        return f"比例之和必须为1，目前只有{ratios_sum}", 400
+
+    portfolio = dict(zip(currencies, ratios))
+
+    with lock:
+        with open('users.json', 'r', encoding='utf-8') as file:
+            config = json.load(file)
+        if "portfolios" not in config["users"][username]:
+            config["users"][username]["portfolios"] = {}
+        config["users"][username]["portfolios"][portfolio_name] = portfolio
+
+        with open('users.json', 'w', encoding='utf-8') as file:
+            json.dump(config, file, ensure_ascii=False, indent=4)
+
+    return redirect(url_for('purchase'))
+
+@app.route('/delete_portfolio', methods=['POST'])
+def delete_portfolio():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    portfolio_name = request.form['portfolio_name']
+
+    with lock:
+        with open('users.json', 'r', encoding='utf-8') as file:
+            config = json.load(file)
+        if portfolio_name in config["users"][username]["portfolios"]:
+            del config["users"][username]["portfolios"][portfolio_name]
+
+        with open('users.json', 'w', encoding='utf-8') as file:
+            json.dump(config, file, ensure_ascii=False, indent=4)
+
+    return redirect(url_for('purchase'))
 
 @app.route('/summarize_accounts')
 def summarize_accounts():
@@ -677,25 +761,70 @@ def summarize_accounts():
     total_spot_balance = 0
     total_equity_balance = 0
     total_margin_balance = 0
+    detailed_message = ""
+    combined_spot_holdings = {}
+    combined_equity_holdings = {}
+    combined_margin_holdings = {}
 
     try:
         with open('users.json', 'r', encoding='utf-8') as file:
             users_config = json.load(file)
         user_accounts = users_config['users'][username]['accounts']
 
-        # 遍历所有账户，汇总余额
+        # 遍历所有账户，汇总余额并记录持仓细节
         for account_name, account_config in user_accounts.items():
-            message, spot_balance, equity_balance, margin_value_in_u = invest_instance.get_account_balance_message(account_config)
+            message, spot_balance, equity_balance, margin_value_in_u, spot_holdings, equity_holdings, margin_holdings = invest_instance.get_account_balance_message(account_config)
             total_spot_balance += spot_balance
             total_equity_balance += equity_balance
             total_margin_balance += margin_value_in_u
-            all_sum = total_spot_balance + total_equity_balance + total_margin_balance
+
+            # 更新综合持仓信息
+            for asset, (quantity, value) in spot_holdings.items():
+                if asset in combined_spot_holdings:
+                    combined_spot_holdings[asset]['quantity'] += quantity
+                    combined_spot_holdings[asset]['value'] += value
+                else:
+                    combined_spot_holdings[asset] = {'quantity': quantity, 'value': value}
+
+            for asset, (quantity, value) in equity_holdings.items():
+                if asset in combined_equity_holdings:
+                    combined_equity_holdings[asset]['quantity'] += quantity
+                    combined_equity_holdings[asset]['value'] += value
+                else:
+                    combined_equity_holdings[asset] = {'quantity': quantity, 'value': value}
+
+            for asset, (quantity, value) in margin_holdings.items():
+                if asset in combined_margin_holdings:
+                    combined_margin_holdings[asset]['quantity'] += quantity
+                    combined_margin_holdings[asset]['value'] += value
+                else:
+                    combined_margin_holdings[asset] = {'quantity': quantity, 'value': value}
+
+            detailed_message += f"<h2>{account_name} 持仓详情:</h2>" + message
+
+        all_sum = total_spot_balance + total_equity_balance + total_margin_balance
 
         # 创建汇总消息
-        message = f"<p>所有账户的现货总价值：{total_spot_balance:.2f} U</p>" + \
-                  f"<p>所有账户的U本位合约总价值：{total_equity_balance:.2f} U</p>" + \
-                  f"<p>所有账户的币本位合约总价值：{total_margin_balance:.2f} U</p>" + \
-                  f"<p>资产总价值：{all_sum:.2f} U</p>"
+        summary_message = f"<p>所有账户的现货总价值：{total_spot_balance:.2f} U</p>" + \
+                          f"<p>所有账户的U本位合约总价值：{total_equity_balance:.2f} U</p>" + \
+                          f"<p>所有账户的币本位合约总价值：{total_margin_balance:.2f} U</p>" + \
+                          f"<p>资产总价值：{all_sum:.2f} U</p>"
+
+        # 排序并创建持仓信息消息
+        def create_sorted_message(holdings, title):
+            sorted_holdings = sorted(holdings.items(), key=lambda x: x[1]['value'], reverse=True)
+            message = f"<h3>{title}：</h3><ul>"
+            for asset, data in sorted_holdings:
+                message += f"<li>{asset}: {data['quantity']:.4f} (价值: {data['value']:.2f} U)</li>"
+            message += "</ul>"
+            return message
+
+        combined_spot_message = create_sorted_message(combined_spot_holdings, "综合现货持仓")
+        combined_equity_message = create_sorted_message(combined_equity_holdings, "综合U本位合约持仓")
+        combined_margin_message = create_sorted_message(combined_margin_holdings, "综合币本位合约持仓")
+
+        # message = summary_message + combined_spot_message + combined_equity_message + combined_margin_message + detailed_message
+        message = summary_message + combined_spot_message + combined_equity_message + combined_margin_message 
     except Exception as e:
         message = f"<p>处理过程中出现错误：{str(e)}</p>"
 
@@ -708,5 +837,5 @@ if __name__ == '__main__':
         SESSION_COOKIE_SECURE=False,
         REMEMBER_COOKIE_DURATION=timedelta(days=1)  # 例如，设置为一天
     )
-    app.run(debug=True)  # 使用 adhoc 生成临时的 SSL 证书
-    # app.run(host='0.0.0.0', port=36125, debug=True)
+    # app.run(debug=True)  # 使用 adhoc 生成临时的 SSL 证书
+    app.run(host='0.0.0.0', port=36125, debug=True)
