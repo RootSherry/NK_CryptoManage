@@ -170,24 +170,22 @@ class Invest:
         })
         exchange.proxies = proxy
 
-        # try:
         # 获取U本位合约账户余额
         swap_balance = exchange.fapiPrivateV2_get_account()
-        # print('牛的',swap_balance)
         equity = calculate_non_zero_wallet_assets(swap_balance)
 
         assets = exchange.dapiPrivateGetAccount()['assets']
 
-        # print(equity)
         # 获取现货账户余额
         spot_balances = get_all_spot_balances(exchange)
 
         # 获取所有币种对应的U价格
         symbol_last_price = fetch_binance_ticker_data(exchange, symbol_type='spot')
-        print(symbol_last_price)
+
         # 格式化余额信息
         message = "<h3>现货账户持仓：</h3><ul>"
         total_spot_value_in_u = 0
+        spot_holdings = {}
         for asset, quantity in spot_balances.items():
             if asset == "USDT":
                 asset_value_in_u = quantity  # 直接使用USDT的数量作为价值
@@ -197,11 +195,13 @@ class Invest:
                 continue  # 如果没有对应的USDT交易对，跳过该币种
             total_spot_value_in_u += asset_value_in_u
             message += f"<li>{asset}: {quantity:.4f} (价值: {asset_value_in_u:.2f} U)</li>"
+            spot_holdings[asset] = (quantity, asset_value_in_u)
 
         message += f"</ul><p>现货账户总价值：{total_spot_value_in_u:.2f} U</p>"
 
         message += "<h3>U本位合约账户持仓：</h3><ul>"
         total_equity_value_in_u = 0
+        equity_holdings = {}
         for asset, quantity in equity.items():
             if asset == "USDT":
                 asset_value_in_u = quantity
@@ -211,31 +211,28 @@ class Invest:
                 continue
             total_equity_value_in_u += asset_value_in_u
             message += f"<li>{asset}: {quantity:.4f} (价值: {asset_value_in_u:.2f} U)</li>"
+            equity_holdings[asset] = (quantity, asset_value_in_u)
 
         message += f"</ul><p>U本位合约账户总价值：{total_equity_value_in_u:.2f} U</p>"
 
         # 初始化 HTML 消息和总价值计算
         message += "<h3>币本位合约账户持仓：</h3><ul>"
         total_margin_value_in_u = 0.0
+        margin_holdings = {}
 
         for asset in assets:
-            # 解析保证金余额和资产名称
             margin_balance = float(asset['marginBalance'])
             asset_name = asset['asset']
 
-            # 筛选出 marginBalance 不为 0 的资产
             if margin_balance != 0.0:
-                # 假设所有资产价值直接以 U（比如 USDT）为单位
-                asset_value_in_u = margin_balance * symbol_last_price[asset_name + "USDT"]  # 如果需要，这里可以添加逻辑来转换资产价值到 U
-
+                asset_value_in_u = margin_balance * symbol_last_price[asset_name + "USDT"]
                 total_margin_value_in_u += asset_value_in_u
                 message += f"<li>{asset_name}: {margin_balance:.4f} (价值: {asset_value_in_u:.2f} U)</li>"
+                margin_holdings[asset_name] = (margin_balance, asset_value_in_u)
 
         message += f"</ul><p>币本位合约账户总价值：{total_margin_value_in_u:.2f} U</p>"
 
-        return message, total_spot_value_in_u, total_equity_value_in_u, total_margin_value_in_u
-        # except Exception as e:
-        #     return f"<p>获取账户余额时发生错误: {str(e)}</p>"
+        return message, total_spot_value_in_u, total_equity_value_in_u, total_margin_value_in_u, spot_holdings, equity_holdings, margin_holdings
 
 
     def perform_purchase(self, username, payment_account, purchase_currency, amount):
